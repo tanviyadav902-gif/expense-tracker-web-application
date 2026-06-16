@@ -1,220 +1,107 @@
 window.onload = function () {
 
-// ================= LOGIN CHECK =================
+    var currentUser = localStorage.getItem("currentUser");
 
-var currentUser = localStorage.getItem("currentUser");
-
-if (!currentUser) {
-    window.location.href = "home.html";
-    return;
-}
-
-
-// ================= ELEMENTS =================
-
-var form = document.getElementById("expense-form");
-var walletEl = document.getElementById("walletBalance");
-
-
-// ================= LOAD WALLET =================
-
-if (walletEl) {
-
-    var balance =
-    parseFloat(localStorage.getItem("walletBalance")) || 0;
-
-    walletEl.innerText = balance;
-}
-
-
-// ================= ADD EXPENSE =================
-
-if (form) {
-
-    form.onsubmit = function (e) {
-
-        e.preventDefault();
-
-        var name =
-        document.getElementById("name").value;
-
-        var amount =
-        document.getElementById("amount").value;
-
-        if (name === "" || amount === "") {
-
-            alert("Fill all fields");
-            return;
-        }
-
-        fetch("/api/expenses", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-
-                name: name,
-                amount: parseFloat(amount)
-
-            })
-
-        })
-
-        .then(response => response.json())
-
-        .then(data => {
-
-            // Update Wallet
-
-            var balance =
-            parseFloat(localStorage.getItem("walletBalance")) || 0;
-
-            balance -= parseFloat(amount);
-
-            localStorage.setItem(
-                "walletBalance",
-                balance
-            );
-
-            if (walletEl) {
-                walletEl.innerText = balance;
-            }
-
-            document.getElementById("message").innerText =
-            "Expense Added Successfully";
-
-            form.reset();
-
-        })
-
-        .catch(error => {
-
-            console.log(error);
-
-            document.getElementById("message").innerText =
-            "Error Saving Expense";
-
-        });
-
-    };
-
-}
-
-
-// ================= DELETE FUNCTION =================
-// (Temporary - still localStorage version)
-// Will convert to MongoDB later
-
-window.deleteExpense = function (index) {
-
-    var expenses =
-    JSON.parse(localStorage.getItem("expenses")) || [];
-
-    var balance =
-    parseFloat(localStorage.getItem("walletBalance")) || 0;
-
-    balance += parseFloat(expenses[index].amount);
-
-    localStorage.setItem(
-        "walletBalance",
-        balance
-    );
-
-    expenses.splice(index, 1);
-
-    localStorage.setItem(
-        "expenses",
-        JSON.stringify(expenses)
-    );
-
-    location.reload();
-
-};
-
-
-// ================= EDIT FUNCTION =================
-// (Temporary - still localStorage version)
-// Will convert to MongoDB later
-
-window.editExpense = function (index) {
-
-    var expenses =
-    JSON.parse(localStorage.getItem("expenses")) || [];
-
-    var newName =
-    prompt("Edit name", expenses[index].name);
-
-    var newAmount =
-    prompt("Edit amount", expenses[index].amount);
-
-    var newDate =
-    prompt(
-        "Edit date",
-        expenses[index].date
-    );
-
-    if (
-        newName !== null &&
-        newAmount !== null &&
-        newDate !== null
-    ) {
-
-        expenses[index].name = newName;
-
-        expenses[index].amount =
-        parseFloat(newAmount);
-
-        expenses[index].date = newDate;
-
-        localStorage.setItem(
-            "expenses",
-            JSON.stringify(expenses)
-        );
-
-        location.reload();
-    }
-
-};
-
-
-// ================= ADD MONEY =================
-
-window.addMoney = function () {
-
-    var amount =
-    document.getElementById("addMoney").value;
-
-    if (amount === "") {
-
-        alert("Enter amount");
+    if (!currentUser) {
+        window.location.href = "home.html";
         return;
     }
 
-    var balance =
-    parseFloat(localStorage.getItem("walletBalance")) || 0;
+    var form = document.getElementById("expense-form");
+    var walletEl = document.getElementById("walletBalance");
 
-    balance += parseFloat(amount);
+    if (walletEl) {
+        var balance =
+        parseFloat(localStorage.getItem("walletBalance")) || 0;
 
-    localStorage.setItem(
-        "walletBalance",
-        balance
-    );
+        walletEl.innerText = balance;
+    }
 
-    location.reload();
-};
+    if (form) {
 
+        form.addEventListener("submit", async function (e) {
 
-// ================= LOGOUT =================
+            e.preventDefault();
 
-window.logout = function () {
+            const name =
+            document.getElementById("name").value.trim();
 
-    localStorage.removeItem("currentUser");
+            const amount =
+            document.getElementById("amount").value;
 
-    window.location.href = "home.html";
-};
+            const message =
+            document.getElementById("message");
+
+            if (!name || !amount) {
+
+                message.innerText =
+                "Please fill all fields";
+
+                return;
+            }
+
+            try {
+
+                const response =
+                await fetch("/api/expenses", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        name: name,
+                        amount: Number(amount)
+                    })
+
+                });
+
+                const data =
+                await response.json();
+
+                if (!response.ok) {
+
+                    message.innerText =
+                    "Server Error: " +
+                    (data.error || "Unknown Error");
+
+                    return;
+                }
+
+                var balance =
+                parseFloat(localStorage.getItem("walletBalance")) || 0;
+
+                balance -= Number(amount);
+
+                localStorage.setItem(
+                    "walletBalance",
+                    balance
+                );
+
+                if (walletEl) {
+                    walletEl.innerText = balance;
+                }
+
+                message.innerText =
+                "Expense Added Successfully";
+
+                form.reset();
+
+            }
+
+            catch (error) {
+
+                console.log(error);
+
+                message.innerText =
+                "Connection Error. Check Render Logs.";
+
+            }
+
+        });
+
+    }
 
 };
