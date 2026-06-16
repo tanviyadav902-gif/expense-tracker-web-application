@@ -1,7 +1,7 @@
 {
   "name": "expense-tracker-web-app",
   "version": "1.0.0",
-  "description": "Expense Tracker Web Application",
+  "description": "Expense Tracker Web Application using Node.js and MongoDB",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -15,6 +15,6 @@
   "author": "Tanvi",
   "license": "ISC",
   "dependencies": {
-    "mongoose": "^9.7.0"
+    "mongoose": "^8.18.0"
   }
 }
