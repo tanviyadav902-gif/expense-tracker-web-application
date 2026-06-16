@@ -13,7 +13,7 @@ mongoose.set("strictQuery", false);
 console.log("Trying MongoDB connection...");
 
 mongoose.connect(
-    "mongodb+srv://YOUR_USERNAME:juWm3YwPAUStl1Yc@cluster0.2jm9kh9.mongodb.net/expenseTracker?retryWrites=true&w=majority&appName=Cluster0"
+    "mongodb+srv://YOUR_USERNAME:PhIzAagxfvICRS2K@cluster0.2jm9kh9.mongodb.net/expenseTracker?retryWrites=true&w=majority&appName=Cluster0"
 )
 .then(() => {
     console.log("MongoDB Connected");
