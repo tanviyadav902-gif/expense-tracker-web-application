@@ -4,7 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const mongoose = require("mongoose");
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // ================= MONGODB CONNECTION =================
 
@@ -12,9 +12,7 @@ mongoose.set("strictQuery", false);
 
 console.log("Trying MongoDB connection...");
 
-mongoose.connect(
-"mongodb+srv://1234tanuyy_db_user:zH0nbwv5As1SHlBh@cluster0.2jm9kh9.mongodb.net/expenseTracker?retryWrites=true&w=majority&appName=Cluster0"
-)
+mongoose.connect(process.env.MONGODB_URI)
 .then(() => {
     console.log("MongoDB Connected");
 })
@@ -53,6 +51,18 @@ const mimeTypes = {
 const server = http.createServer(async (req, res) => {
 
     const parsedUrl = url.parse(req.url, true);
+
+    // Enable CORS
+
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+    if (req.method === "OPTIONS") {
+        res.writeHead(200);
+        res.end();
+        return;
+    }
 
     // ================= GET EXPENSES =================
 
@@ -105,7 +115,7 @@ const server = http.createServer(async (req, res) => {
 
                 const expense = new Expense({
                     name: data.name,
-                    amount: data.amount,
+                    amount: Number(data.amount),
                     date: new Date().toISOString()
                 });
 
@@ -117,7 +127,7 @@ const server = http.createServer(async (req, res) => {
 
                 res.end(JSON.stringify({
                     message: "Expense Added",
-                    expense: expense
+                    expense
                 }));
 
             } catch (err) {
@@ -144,8 +154,7 @@ const server = http.createServer(async (req, res) => {
 
         try {
 
-            const id =
-                parsedUrl.pathname.split("/").pop();
+            const id = parsedUrl.pathname.split("/").pop();
 
             await Expense.findByIdAndDelete(id);
 
@@ -213,8 +222,6 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
 
-    console.log(
-        `Server running at http://localhost:${PORT}`
-    );
+    console.log(`Server running on port ${PORT}`);
 
 });
