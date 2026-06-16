@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+
+<style>
+body{
+font-family:'Times New Roman', Times, serif;
+background: rgb(149,152,149);
+text-align:center;
+margin:0;
+padding:0;
+}
+
+.container{
+width:450px;
+margin:auto;
+margin-top:80px;
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 0 15px rgba(0,0,0,0.2);
+}
+
+ul{
+list-style:none;
+padding:0;
+}
+
+li{
+background:#f5f5f5;
+padding:10px;
+margin:8px 0;
+border-radius:6px;
+border:1px solid #ddd;
+font-size:16px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+button{
+padding:6px 12px;
+margin-left:5px;
+background:#007BFF;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.deleteBtn{
+background:#dc3545;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Admin Dashboard</h1>
+
+<h3>Total Logged Users</h3>
+<p id="userCount"></p>
+
+<h3>User Emails</h3>
+<ul id="userList"></ul>
+
+<br>
+
+<button onclick="goIndex()">Go to App</button>
+<button onclick="logout()">Logout</button>
+
+</div>
+
+<script>
+
+// =========================
+// ADMIN ACCESS CONTROL
+// =========================
+
+var adminEmail = "etadmin1@gmail.com";
+var currentUser = localStorage.getItem("currentUser");
+
+if(currentUser !== adminEmail){
+  alert("Access Denied! Admin only.");
+  window.location.href = "2.html";
+}
+
+// =========================
+// LOAD USERS
+// =========================
+
+var users = JSON.parse(localStorage.getItem("users")) || [];
+
+function loadUsers(){
+
+document.getElementById("userCount").innerText = users.length;
+
+var list = document.getElementById("userList");
+list.innerHTML = "";
+
+if(users.length === 0){
+list.innerHTML = "<li>No users registered</li>";
+return;
+}
+
+users.forEach(function(user,index){
+
+var li = document.createElement("li");
+
+var emailText = document.createElement("div");
+
+emailText.innerHTML =
+"Email: " + user.email +
+"<br>Login: " + (user.login || "N/A") +
+"<br>Logout: " + (user.logout || "N/A");
+
+var deleteBtn = document.createElement("button");
+deleteBtn.textContent = "Delete";
+deleteBtn.className = "deleteBtn";
+
+deleteBtn.onclick = function(){
+
+if(confirm("Delete this user?")){
+
+users.splice(index,1);
+localStorage.setItem("users",JSON.stringify(users));
+loadUsers();
+
+}
+
+};
+
+li.appendChild(emailText);
+li.appendChild(deleteBtn);
+
+list.appendChild(li);
+
+});
+
+}
+
+loadUsers();
+
+// =========================
+// NAVIGATION
+// =========================
+
+function goIndex(){
+window.location.href="2.html";
+}
+
+function logout(){
+localStorage.removeItem("currentUser");
+window.location.href="home.html";
+}
+
+</script>
+
+</body>
+</html>

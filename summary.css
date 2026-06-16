@@ -1,0 +1,25 @@
+body {
+font-family: 'Times New Roman', Times, serif;
+text-align: center;
+margin: 40px;
+background: rgb(149, 152, 149);
+padding: 20px;
+}
+
+#Back-to-Home>a{
+text-decoration: none;
+color: white;
+background-color: #007BFF;
+border-radius: 20px;
+font-size: medium;
+padding: 15px;
+}
+
+#Back-to-Home>a{
+  text-decoration: none;
+  color: white;
+  background-color: #007BFF;
+  border-radius: 20px;
+  font-size: medium;
+  padding: 15px;
+}

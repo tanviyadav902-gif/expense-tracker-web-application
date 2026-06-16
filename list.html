@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Expense List</title>
+
+<link rel="stylesheet" href="2.css">
+
+<style>
+
+body {
+font-family: Arial;
+}
+
+table {
+border-collapse: collapse;
+width: 100%;
+margin-top: 20px;
+}
+
+th, td {
+padding: 10px;
+text-align: center;
+border: 1px solid #ccc;
+}
+
+th {
+background-color: green;
+color: white;
+}
+
+button {
+padding: 5px 10px;
+margin: 2px;
+cursor: pointer;
+}
+
+#search {
+padding: 8px;
+width: 200px;
+}
+
+#monthFilter{
+padding:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<h2 id="totalExpense">
+Total Expense: ₹0
+</h2>
+
+
+<!-- SEARCH -->
+
+<input
+type="text"
+id="search"
+placeholder="Search expense..."
+onkeyup="searchExpense()"
+>
+
+
+<!-- MONTH FILTER -->
+
+<br><br>
+
+<select
+id="monthFilter"
+onchange="filterByMonth()"
+>
+
+<option value="all">
+All Months
+</option>
+
+<option value="0">
+January
+</option>
+
+<option value="1">
+February
+</option>
+
+<option value="2">
+March
+</option>
+
+<option value="3">
+April
+</option>
+
+<option value="4">
+May
+</option>
+
+<option value="5">
+June
+</option>
+
+<option value="6">
+July
+</option>
+
+<option value="7">
+August
+</option>
+
+<option value="8">
+September
+</option>
+
+<option value="9">
+October
+</option>
+
+<option value="10">
+November
+</option>
+
+<option value="11">
+December
+</option>
+
+</select>
+
+
+<!-- TABLE -->
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Expense Name</th>
+
+<th>Amount</th>
+
+<th>Date & Time</th>
+
+<th>Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="expense-list">
+
+</tbody>
+
+</table>
+
+
+<br><br>
+
+<p id="Back-to-Home">
+<a href="2.html">
+Back
+</a>
+</p>
+
+<script src="list.js"></script>
+
+</body>
+</html>

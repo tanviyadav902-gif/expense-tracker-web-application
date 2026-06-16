@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expense Tracker</title>
+
+<link rel="stylesheet" href="2.css">
+</head>
+
+<body id="two">
+
+<h1 id="welcomeText">Welcome to Expense Tracker</h1>
+<br>
+
+<nav>
+
+<a href="home.html">Home</a>
+<a href="add.html">Add Expenses</a>
+<a href="list.html">View List</a>
+
+<a href="summary.html">Summary</a>
+
+<!-- ADMIN LINK -->
+<a href="admin.html" id="adminLink" style="display:none;">Admin Page</a>
+
+<div class="profile-container">
+
+<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+class="profile-pic"
+onclick="toggleMenu()">
+
+<div id="profileDropdown" class="profile-dropdown">
+
+<div class="profile-header">
+<h3 id="profileName">User</h3>
+<p style="font-size:12px;">View Profile</p>
+</div>
+
+<hr>
+
+<a href="settings.html">⚙ Edit Profile</a>
+<a href="deleted.html">🗑 Recently Deleted</a>
+<a href="calculator.html">🧮 Calculator</a>
+
+
+
+<hr>
+
+<a href="#" onclick="logout()" style="color:red;">🚪 Logout</a>
+<a href="#" onclick="deleteAccount()" style="color:darkred;">❌ Delete Account</a>
+
+</div>
+
+</div>
+
+</nav>
+
+<section id="info">
+
+<h2>Use of Expense Tracker App</h2><br>
+
+<p>
+An expense tracker app helps track daily expenses, manage budgets, 
+and improve financial awareness for smarter money decisions.
+</p>
+
+</section>
+
+<script>
+
+// =========================
+// CHECK LOGIN
+// =========================
+
+var currentUser = localStorage.getItem("currentUser");
+
+if(!currentUser){
+  alert("Please login first");
+  window.location.href="home.html";
+}
+
+// =========================
+// LOAD USERS
+// =========================
+
+var users = JSON.parse(localStorage.getItem("users")) || [];
+
+// FIND CURRENT USER
+var user = users.find(function(u){
+  return u.email === currentUser || u.phone === currentUser;
+});
+
+// =========================
+// SHOW USER NAME
+// =========================
+
+if(user){
+  document.getElementById("welcomeText").innerText =
+    "Welcome " + (user.username || user.name || "User") + " to Expense Tracker";
+
+  document.getElementById("profileName").innerText =
+    user.username || user.name || "User";
+}
+
+// =========================
+// ADMIN ACCESS (FINAL FIX)
+// =========================
+
+var adminEmail = "etadmin1@gmail.com";
+
+if(currentUser === adminEmail){
+  document.getElementById("adminLink").style.display = "inline";
+} else {
+  document.getElementById("adminLink").style.display = "none";
+}
+
+// =========================
+// DROPDOWN MENU
+// =========================
+
+function toggleMenu(){
+  document.getElementById("profileDropdown").classList.toggle("show");
+}
+
+// CLOSE DROPDOWN WHEN CLICK OUTSIDE
+window.onclick = function(event){
+  if(!event.target.matches('.profile-pic')){
+    var dropdown = document.getElementById("profileDropdown");
+    if(dropdown){
+      dropdown.classList.remove("show");
+    }
+  }
+}
+
+// =========================
+// LOGOUT
+// =========================
+
+function logout(){
+
+var users = JSON.parse(localStorage.getItem("users")) || [];
+var logoutTime = new Date().toLocaleString();
+
+users.forEach(function(u){
+  if(u.email === currentUser || u.phone === currentUser){
+    u.logout = logoutTime;
+  }
+});
+
+localStorage.setItem("users", JSON.stringify(users));
+
+localStorage.removeItem("currentUser");
+
+alert("Logged out successfully!");
+window.location.href="home.html";
+}
+
+
+
+function deleteAccount(){
+
+var confirmDelete = confirm("Are you sure you want to delete your account permanently?");
+
+if(!confirmDelete){
+  return;
+}
+
+var users = JSON.parse(localStorage.getItem("users")) || [];
+
+// remove current user
+users = users.filter(function(u){
+  return !(u.email === currentUser || u.phone === currentUser);
+});
+
+// save updated users
+localStorage.setItem("users", JSON.stringify(users));
+
+// logout user
+localStorage.removeItem("currentUser");
+
+alert("Your account has been deleted successfully!");
+
+window.location.href = "home.html";
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Summary</title>
+<link rel="stylesheet" href="summary.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body{
+font-family:Arial;
+background:#f0f0f0;
+}
+.container{
+background:white;
+width:420px;
+margin:30px auto;
+padding:20px;
+border-radius:10px;
+text-align:center;
+}
+</style></head>
+<body>
+<div class="container">
+<h2>Summary</h2>
+<p>Total Budget:
+<span id="total-income">0</span></p>
+<p>Total Expense:
+<span id="total-expenses">0</span></p>
+<p>Remaining:
+<span id="remaining-balance">0</span></p>
+<p id="budgetWarning"></p>
+<canvas id="summaryChart"></canvas></div>
+<p id="Back-to-Home">
+<a href="2.html">Back</a></p>
+<script>
+var users =
+JSON.parse(localStorage.getItem("users")) || [];
+var currentUser =
+localStorage.getItem("currentUser");
+var user =
+users.find(function(u){
+return u.email===currentUser
+|| u.phone===currentUser;
+}) || {budget:0};
+var expenses =
+JSON.parse(localStorage.getItem("expenses")) || [];
+var budget =
+parseFloat(user.budget) || 0;
+var total = 0;
+expenses.forEach(function(e){
+total += parseFloat(e.amount);
+});
+var remaining =
+budget - total;
+document.getElementById("total-income").innerText = "₹"+budget;
+document.getElementById("total-expenses").innerText = "₹"+total;
+document.getElementById("remaining-balance").innerText = "₹"+remaining;
+var text = "";
+var color = "green";
+if(total > budget){
+text = "⚠ Budget Exceeded";
+color = "red";
+}
+else if(total > budget*0.8){
+text = "⚠ Budget Almost Finished";
+color = "orange";
+}
+else{
+text = "✔ Budget Safe";
+color = "green";
+}
+var warn =
+document.getElementById("budgetWarning");
+warn.innerText = text;
+warn.style.color = color;
+warn.style.fontWeight = "bold";
+new Chart(
+document.getElementById("summaryChart"),
+{
+type:"doughnut",
+data:{
+labels:["Expense","Remaining"],
+datasets:[{
+data:[total,remaining],
+backgroundColor:["red","green"]
+}]
+}
+});
+</script></body></html>

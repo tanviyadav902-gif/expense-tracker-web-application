@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expense Tracker App</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+body{
+font-family:Arial;
+text-align:center;
+padding:20px;
+}
+
+button{
+padding:10px 20px;
+margin:10px;
+cursor:pointer;
+}
+
+.box{
+border:1px solid #ccc;
+padding:20px;
+width:300px;
+margin:auto;
+border-radius:10px;
+margin-top:20px;
+}
+
+input{
+padding:8px;
+margin:5px;
+width:90%;
+}
+
+#authPage{
+display:none;
+}
+
+#forgotSection{
+display:none;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+(function(){
+emailjs.init("hd1yZ8Nev-VOhzN4E");
+})();
+</script>
+
+</head>
+
+<body id="first">
+
+<!-- PAGE 1 -->
+
+<div id="homePage">
+
+<h1 id="text"> Expense Tracker App</h1>
+
+<div id="img">
+<img src="https://img.freepik.com/free-vector/wallet-money-cartoon-vector-icon-illustration-finance-business-icon-isolated-flat-vector_138676-12882.jpg"
+height="150">
+</div>
+
+<p id="text">
+Save money! <br>
+The more your money works for you,<br>
+the less you have to work for.
+</p>
+
+<div id="btn">
+<button onclick="openRegister()">Register</button>
+<button onclick="openLogin()">Login</button>
+</div>
+
+</div>
+
+
+<!-- PAGE 2 -->
+
+<div id="authPage">
+
+<button onclick="goHome()">⬅ Back</button>
+
+<!-- REGISTER -->
+
+<div id="registerBox" class="box" style="display:none">
+
+<h2>Register</h2>
+
+<input type="text" id="regName" placeholder="Name"><br>
+<input type="email" id="regEmail" placeholder="Email"><br>
+<input type="text" id="regPhone" placeholder="Phone Number"><br>
+
+<div style="position:relative;">
+  <input type="password" id="regPassword" placeholder="Password">
+  <span onclick="togglePassword('regPassword', this)" 
+        style="position:absolute; right:15px; top:8px; cursor:pointer;">👁️</span>
+</div>
+
+<div style="position:relative;">
+  <input type="password" id="regConfirm" placeholder="Confirm Password">
+  <span onclick="togglePassword('regConfirm', this)" 
+        style="position:absolute; right:15px; top:8px; cursor:pointer;">👁️</span>
+</div>
+
+<button onclick="registerUser()">Register</button>
+
+</div>
+
+<!-- LOGIN -->
+
+<div id="loginBox" class="box" style="display:none">
+
+<h2>Login</h2>
+
+<input type="text" id="loginContact" placeholder="Email or Phone"><br>
+
+<div style="position:relative;">
+  <input type="password" id="loginPassword" placeholder="Password">
+  <span onclick="togglePassword('loginPassword', this)" 
+        style="position:absolute; right:15px; top:8px; cursor:pointer;">👁️</span>
+</div>
+
+<button onclick="loginUser()">Login</button>
+
+<br><br>
+<a href="#" onclick="showForgot()">Forgot Password?</a>
+
+</div>
+
+<!-- RESET PASSWORD -->
+
+<div id="forgotSection" class="box">
+
+<h2>Reset Password</h2>
+
+<input type="email" id="forgotContact" placeholder="Enter Email"><br>
+
+<button onclick="sendEmailOTP()">Send OTP</button>
+
+<div id="otpInputs" style="display:none">
+
+<input type="text" id="enteredOTP" placeholder="Enter OTP"><br>
+
+<div style="position:relative;">
+  <input type="password" id="newPassword" placeholder="New Password">
+  <span onclick="togglePassword('newPassword', this)" 
+        style="position:absolute; right:15px; top:8px; cursor:pointer;">👁️</span>
+</div>
+
+<div style="position:relative;">
+  <input type="password" id="confirmNew" placeholder="Confirm Password">
+  <span onclick="togglePassword('confirmNew', this)" 
+        style="position:absolute; right:15px; top:8px; cursor:pointer;">👁️</span>
+</div>
+
+<button onclick="verifyEmailOTP()">Reset Password</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+var currentUserIndex=null;
+
+/* 👁️ SHOW / HIDE PASSWORD */
+function togglePassword(id, icon){
+  var input = document.getElementById(id);
+
+  if(input.type === "password"){
+    input.type = "text";
+    icon.innerText = "🙈";
+  } else {
+    input.type = "password";
+    icon.innerText = "👁️";
+  }
+}
+
+/* PAGE SWITCH */
+
+function openRegister(){
+document.getElementById("homePage").style.display="none";
+document.getElementById("authPage").style.display="block";
+document.getElementById("registerBox").style.display="block";
+document.getElementById("loginBox").style.display="none";
+}
+
+function openLogin(){
+document.getElementById("homePage").style.display="none";
+document.getElementById("authPage").style.display="block";
+document.getElementById("loginBox").style.display="block";
+document.getElementById("registerBox").style.display="none";
+}
+
+function goHome(){
+document.getElementById("homePage").style.display="block";
+document.getElementById("authPage").style.display="none";
+}
+
+/* REGISTER */
+
+function registerUser(){
+
+var name=document.getElementById("regName").value;
+var email=document.getElementById("regEmail").value;
+var phone=document.getElementById("regPhone").value;
+var password=document.getElementById("regPassword").value;
+var confirm=document.getElementById("regConfirm").value;
+
+if(!name||!email||!phone||!password||!confirm){
+alert("All fields required");
+return;
+}
+
+if(password!==confirm){
+alert("Passwords do not match");
+return;
+}
+
+var users=JSON.parse(localStorage.getItem("users"))||[];
+
+if(users.find(u=>u.email===email || u.phone===phone)){
+alert("User already exists");
+return;
+}
+
+users.push({name,email,phone,password});
+localStorage.setItem("users",JSON.stringify(users));
+
+alert("Registration Successful!");
+}
+
+/* LOGIN */
+
+function loginUser(){
+
+var contact=document.getElementById("loginContact").value;
+var password=document.getElementById("loginPassword").value;
+
+var users=JSON.parse(localStorage.getItem("users"))||[];
+
+var user=users.find(
+u=>(u.email===contact || u.phone===contact) && u.password===password
+);
+
+if(user){
+localStorage.setItem("currentUser",contact);
+alert("Login Successful!");
+window.location.href="settings.html";
+}else{
+alert("Invalid credentials");
+}
+
+}
+
+/* FORGOT PASSWORD */
+
+function showForgot(){
+document.getElementById("forgotSection").style.display="block";
+}
+
+/* SEND OTP */
+
+function sendEmailOTP(){
+
+var contact=document.getElementById("forgotContact").value;
+
+var users=JSON.parse(localStorage.getItem("users"))||[];
+
+currentUserIndex=users.findIndex(u=>u.email===contact);
+
+if(currentUserIndex===-1){
+alert("User not found");
+return;
+}
+
+var otp=Math.floor(100000+Math.random()*900000);
+
+users[currentUserIndex].otp=otp;
+
+localStorage.setItem("users",JSON.stringify(users));
+
+emailjs.send("service_04qgdkn","template_q6ebmmj",{
+to_email:contact,
+otp_code:otp
+})
+
+.then(function(){
+alert("OTP sent!");
+document.getElementById("otpInputs").style.display="block";
+})
+
+.catch(function(){
+alert("Failed to send OTP");
+});
+
+}
+
+/* VERIFY OTP */
+
+function verifyEmailOTP(){
+
+var entered=document.getElementById("enteredOTP").value;
+var newPass=document.getElementById("newPassword").value;
+var confirm=document.getElementById("confirmNew").value;
+
+var users=JSON.parse(localStorage.getItem("users"))||[];
+
+if(entered!=users[currentUserIndex].otp){
+alert("Incorrect OTP");
+return;
+}
+
+if(newPass!==confirm){
+alert("Passwords do not match");
+return;
+}
+
+users[currentUserIndex].password=newPass;
+
+delete users[currentUserIndex].otp;
+
+localStorage.setItem("users",JSON.stringify(users));
+
+alert("Password reset successful!");
+}
+
+</script>
+
+</body>
+</html>

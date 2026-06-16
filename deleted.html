@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Recently Deleted</title>
+  <link rel="stylesheet" href="2.css">
+</head>
+
+<body>
+
+<h1>Recently Deleted Expenses</h1>
+
+<table id="deletedTable" border="1" width="70%" align="center">
+
+<tr>
+<th>Date</th>
+<th>Expense</th>
+<th>Amount</th>
+<th>Actions</th>
+</tr>
+
+</table>
+
+<br>
+
+<p id="Back-to-Home">
+  <a href="2.html">Back</a>
+</p>
+
+<script>
+
+var deleted = JSON.parse(localStorage.getItem("deletedExpenses")) || [];
+var expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+
+var table = document.getElementById("deletedTable");
+
+// ================= LOAD TABLE =================
+function loadTable(){
+
+  table.innerHTML = `
+    <tr>
+      <th>Date</th>
+      <th>Expense</th>
+      <th>Amount</th>
+      <th>Actions</th>
+    </tr>
+  `;
+
+  deleted.forEach(function(exp, index){
+
+    var row = `
+    <tr>
+      <td>${exp.deletedAt ? new Date(exp.deletedAt).toLocaleString() : ""}</td>
+      <td>${exp.name}</td>
+      <td>₹${exp.amount}</td>
+      <td>
+        <button onclick="restoreExpense(${index})">Restore</button>
+        <button onclick="deleteForever(${index})">Delete</button>
+      </td>
+    </tr>
+    `;
+
+    table.innerHTML += row;
+  });
+}
+
+loadTable();
+
+// ================= RESTORE =================
+function restoreExpense(index){
+
+  var item = deleted[index];
+
+  expenses.push(item);
+
+  deleted.splice(index,1);
+
+  localStorage.setItem("expenses", JSON.stringify(expenses));
+  localStorage.setItem("deletedExpenses", JSON.stringify(deleted));
+
+  loadTable();
+}
+
+// ================= PERMANENT DELETE =================
+function deleteForever(index){
+
+  var confirmDelete = confirm("Are you sure you want to delete permanently?");
+
+  if(confirmDelete){
+    deleted.splice(index,1);
+    localStorage.setItem("deletedExpenses", JSON.stringify(deleted));
+    loadTable();
+  }
+}
+
+</script>
+
+</body>
+</html>

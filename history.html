@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Expense History</title>
+<link rel="stylesheet" href="2.css">
+</head>
+
+<body>
+
+<h1>Monthly Expense History</h1>
+
+<div class="history-card">
+
+<label>Select Month:</label>
+
+<select id="monthSelect" onchange="loadHistory()">
+
+<option value="0">January</option>
+<option value="1">February</option>
+<option value="2">March</option>
+<option value="3">April</option>
+<option value="4">May</option>
+<option value="5">June</option>
+<option value="6">July</option>
+<option value="7">August</option>
+<option value="8">September</option>
+<option value="9">October</option>
+<option value="10">November</option>
+<option value="11">December</option>
+
+</select>
+
+<h3 id="monthlyTotal">Total: ₹0</h3>
+
+<table id="historyTable">
+
+<tr>
+<th>Date</th>
+<th>Time</th>
+<th>Expense</th>
+<th>Amount</th>
+</tr>
+
+</table>
+
+</div>
+
+<script src="history.js"></script>
+
+</body>
+</html>

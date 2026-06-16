@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Settings - Profile</title>
+<link rel="stylesheet" href="style.css"></head>
+<body id="fifth">
+<h1>User Profile</h1>
+<form id="settings-form">
+<input type="text" id="username" placeholder="Your Name" required>
+<input type="number" id="age" placeholder="Your Age" min="15" max="50" required>
+<input type="number" id="budget" placeholder="Monthly Budget (₹)" required>
+<button type="submit">Save Profile</button></form>
+<h2>Your Profile Info 👤</h2>
+<div id="profile-info"></div><br>
+<p id="Back-to-Home">
+<a href="2.html">Next</a></p>
+<script>
+var currentUser = localStorage.getItem("currentUser");
+if(!currentUser){
+  alert("Please login first");
+  window.location.href="index.html";
+}
+var users = JSON.parse(localStorage.getItem("users")) || [];
+var userIndex = users.findIndex(function(user){
+  return user.email === currentUser || user.phone === currentUser;
+});
+if(userIndex === -1){
+  alert("User not found");
+  window.location.href="index.html";
+}
+function loadProfile(){
+  var user = users[userIndex];
+  document.getElementById("profile-info").innerHTML =
+    "<p><strong>Name:</strong> " + (user.username || "Not set") + "</p>" +
+    "<p><strong>Age:</strong> " + (user.age || "-") + "</p>" +
+    "<p><strong>Monthly Budget:</strong> ₹" + (user.budget || "-") + "</p>";
+}
+loadProfile();
+var user = users[userIndex];
+document.getElementById("username").value = user.username || "";
+document.getElementById("age").value = user.age || "";
+document.getElementById("budget").value = user.budget || "";
+document.getElementById("settings-form").addEventListener("submit",function(e){
+  e.preventDefault();
+  users[userIndex].username = document.getElementById("username").value;
+  users[userIndex].age = document.getElementById("age").value;
+  users[userIndex].budget = document.getElementById("budget").value;
+  localStorage.setItem("users", JSON.stringify(users));
+  alert("Profile Saved Successfully!");
+  loadProfile();
+});
+function logout(){
+  localStorage.removeItem("currentUser");
+  alert("Logged out successfully");
+  window.location.href="index.html";
+}
+</script></body></html>
