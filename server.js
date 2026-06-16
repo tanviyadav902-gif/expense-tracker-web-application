@@ -12,7 +12,9 @@ mongoose.set("strictQuery", false);
 
 console.log("Trying MongoDB connection...");
 
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(
+    "mongodb+srv://YOUR_USERNAME:juWm3YwPAUStl1Yc@cluster0.2jm9kh9.mongodb.net/expenseTracker?retryWrites=true&w=majority&appName=Cluster0"
+)
 .then(() => {
     console.log("MongoDB Connected");
 })
@@ -43,7 +45,9 @@ const mimeTypes = {
     ".json": "application/json",
     ".jpg": "image/jpeg",
     ".jpeg": "image/jpeg",
-    ".png": "image/png"
+    ".png": "image/png",
+    ".gif": "image/gif",
+    ".svg": "image/svg+xml"
 };
 
 // ================= SERVER =================
@@ -52,7 +56,7 @@ const server = http.createServer(async (req, res) => {
 
     const parsedUrl = url.parse(req.url, true);
 
-    // Enable CORS
+    // ================= CORS =================
 
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
@@ -72,7 +76,7 @@ const server = http.createServer(async (req, res) => {
     ) {
         try {
 
-            const expenses = await Expense.find();
+            const expenses = await Expense.find().sort({ date: -1 });
 
             res.writeHead(200, {
                 "Content-Type": "application/json"
@@ -126,6 +130,7 @@ const server = http.createServer(async (req, res) => {
                 });
 
                 res.end(JSON.stringify({
+                    success: true,
                     message: "Expense Added",
                     expense
                 }));
@@ -137,6 +142,7 @@ const server = http.createServer(async (req, res) => {
                 });
 
                 res.end(JSON.stringify({
+                    success: false,
                     error: err.message
                 }));
             }
@@ -163,6 +169,7 @@ const server = http.createServer(async (req, res) => {
             });
 
             res.end(JSON.stringify({
+                success: true,
                 message: "Expense Deleted"
             }));
 
@@ -173,6 +180,7 @@ const server = http.createServer(async (req, res) => {
             });
 
             res.end(JSON.stringify({
+                success: false,
                 error: err.message
             }));
         }
