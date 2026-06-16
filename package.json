@@ -1,19 +1,20 @@
 {
-  "name": "expense-tracker-web-appl",
+  "name": "expense-tracker-web-app",
   "version": "1.0.0",
-  "main": "history.js",
+  "description": "Expense Tracker Web Application",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "expense",
+    "tracker",
+    "mongodb",
+    "nodejs"
+  ],
+  "author": "Tanvi",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "body-parser": "^2.2.2",
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
     "mongoose": "^9.7.0"
   }
 }
