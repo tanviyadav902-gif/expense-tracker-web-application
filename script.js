@@ -1,5 +1,7 @@
 window.onload = function () {
 
+    // ================= LOGIN CHECK =================
+
     var currentUser = localStorage.getItem("currentUser");
 
     if (!currentUser) {
@@ -7,15 +9,23 @@ window.onload = function () {
         return;
     }
 
+    // ================= ELEMENTS =================
+
     var form = document.getElementById("expense-form");
     var walletEl = document.getElementById("walletBalance");
+    var message = document.getElementById("message");
+
+    // ================= LOAD WALLET =================
 
     if (walletEl) {
+
         var balance =
-        parseFloat(localStorage.getItem("walletBalance")) || 0;
+            parseFloat(localStorage.getItem("walletBalance")) || 0;
 
         walletEl.innerText = balance;
     }
+
+    // ================= ADD EXPENSE =================
 
     if (form) {
 
@@ -23,27 +33,23 @@ window.onload = function () {
 
             e.preventDefault();
 
-            const name =
-            document.getElementById("name").value.trim();
+            var name =
+                document.getElementById("name").value.trim();
 
-            const amount =
-            document.getElementById("amount").value;
-
-            const message =
-            document.getElementById("message");
+            var amount =
+                document.getElementById("amount").value;
 
             if (!name || !amount) {
 
                 message.innerText =
-                "Please fill all fields";
+                    "Please fill all fields";
 
                 return;
             }
 
             try {
 
-                const response =
-                await fetch("/api/expenses", {
+                const response = await fetch("/api/expenses", {
 
                     method: "POST",
 
@@ -52,42 +58,46 @@ window.onload = function () {
                     },
 
                     body: JSON.stringify({
+
                         name: name,
                         amount: Number(amount)
+
                     })
 
                 });
 
-                const data =
-                await response.json();
+                const data = await response.json();
 
-                if (!response.ok) {
+                if (response.ok) {
+
+                    var balance =
+                        parseFloat(localStorage.getItem("walletBalance")) || 0;
+
+                    balance -= Number(amount);
+
+                    localStorage.setItem(
+                        "walletBalance",
+                        balance
+                    );
+
+                    if (walletEl) {
+
+                        walletEl.innerText = balance;
+                    }
 
                     message.innerText =
-                    "Server Error: " +
-                    (data.error || "Unknown Error");
+                        "Expense Added Successfully";
 
-                    return;
+                    form.reset();
+
                 }
 
-                var balance =
-                parseFloat(localStorage.getItem("walletBalance")) || 0;
+                else {
 
-                balance -= Number(amount);
+                    message.innerText =
+                        data.error || "Server Error";
 
-                localStorage.setItem(
-                    "walletBalance",
-                    balance
-                );
-
-                if (walletEl) {
-                    walletEl.innerText = balance;
                 }
-
-                message.innerText =
-                "Expense Added Successfully";
-
-                form.reset();
 
             }
 
@@ -96,7 +106,7 @@ window.onload = function () {
                 console.log(error);
 
                 message.innerText =
-                "Connection Error. Check Render Logs.";
+                    "Cannot connect to server";
 
             }
 
