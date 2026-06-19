@@ -1,35 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Add Expense</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Add Expense</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  
 
-  <div class="container">
-  <!-- <div class="half-image">
-    <img src="https://www.shutterstock.com/image-vector/monthly-expenses-planning-checklist-receipts-600nw-443618578.jpg" alt="money">
-  </div> -->
+    <div class="container">
 
-  <div class="half-content">
-    <h1>Add your Daily Expenses.</h1>
-    <p>Track your expenses smartly!</p>
-    <form id="expense-form">
-    <input type="text" id="name" placeholder="Expense Name" required />
-    <input type="number" id="amount" placeholder="Amount" required /><br><br>
-    <button type="submit">Add</button>
-    <p id="message"></p><br>
-  </form>
-  
-    <p id="Back-to-Home"><a href="2.html">Back</a></p>
-  <br><br>
-  </div>
-</div>
+        <!--
+        <div class="half-image">
+            <img src="https://www.shutterstock.com/image-vector/monthly-expenses-planning-checklist-receipts-600nw-443618578.jpg"
+                 alt="Money">
+        </div>
+        -->
 
-  <script src="script.js"></script>
-  
+        <div class="half-content">
+
+            <h1>Add your Daily Expenses.</h1>
+
+            <p>Track your expenses smartly!</p>
+
+            <form id="expense-form">
+
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Expense Name"
+                    required>
+
+                <br><br>
+
+                <input
+                    type="number"
+                    id="amount"
+                    placeholder="Amount"
+                    required>
+
+                <br><br>
+
+                <button type="submit">
+                    Add
+                </button>
+
+            </form>
+
+            <br>
+
+            <!-- Success/Error Message -->
+            <p id="message"></p>
+
+            <br>
+
+            <p id="Back-to-Home">
+                <a href="2.html">
+                    Back
+                </a>
+            </p>
+
+            <br><br>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
 </body>
+
 </html>
