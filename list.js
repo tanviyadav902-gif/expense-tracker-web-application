@@ -1,24 +1,45 @@
 let allExpenses = [];
 
 window.onload = function () {
+
     showExpenses();
+
 };
 
-// ================= SHOW =================
+
+// ================= SHOW EXPENSES =================
 
 async function showExpenses() {
 
-    const response = await fetch("/api/expenses");
-    allExpenses = await response.json();
+    try {
 
-    displayExpenses(allExpenses);
+        const response =
+            await fetch("/api/expenses");
+
+        allExpenses =
+            await response.json();
+
+        displayExpenses(allExpenses);
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+        alert("Cannot load expenses");
+
+    }
+
 }
 
-// ================= DISPLAY =================
+
+// ================= DISPLAY EXPENSES =================
 
 function displayExpenses(expenses) {
 
-    const list = document.getElementById("expense-list");
+    const list =
+        document.getElementById("expense-list");
 
     list.innerHTML = "";
 
@@ -28,43 +49,63 @@ function displayExpenses(expenses) {
 
         total += Number(exp.amount);
 
-        const row = document.createElement("tr");
+        const row =
+            document.createElement("tr");
 
         row.innerHTML = `
-        <td>${exp.name}</td>
-        <td>₹${exp.amount}</td>
-        <td>${new Date(exp.date).toLocaleString()}</td>
-        <td>
-            <button onclick="editExpense('${exp._id}')">
-                Edit
-            </button>
 
-            <button onclick="deleteExpense('${exp._id}')">
-                Delete
-            </button>
+        <td>${exp.name}</td>
+
+        <td>₹${exp.amount}</td>
+
+        <td>${new Date(exp.date).toLocaleString()}</td>
+
+        <td>
+
+        <button onclick="editExpense('${exp._id}')">
+        Edit
+        </button>
+
+        <button onclick="deleteExpense('${exp._id}')">
+        Delete
+        </button>
+
         </td>
+
         `;
 
         list.appendChild(row);
+
     });
 
     document.getElementById("totalExpense").innerText =
         "Total Expense: ₹" + total;
+
 }
+
 
 // ================= SEARCH =================
 
 function searchExpense() {
 
     const keyword =
-        document.getElementById("search").value.toLowerCase();
+        document.getElementById("search")
+        .value
+        .toLowerCase();
 
-    const filtered = allExpenses.filter(exp =>
-        exp.name.toLowerCase().includes(keyword)
-    );
+    const filtered =
+        allExpenses.filter(function (exp) {
+
+            return exp.name
+                .toLowerCase()
+                .includes(keyword);
+
+        });
 
     displayExpenses(filtered);
+
 }
+
 
 // ================= MONTH FILTER =================
 
@@ -74,19 +115,27 @@ function filterByMonth() {
         document.getElementById("monthFilter").value;
 
     if (month === "all") {
+
         displayExpenses(allExpenses);
+
         return;
+
     }
 
-    const filtered = allExpenses.filter(function (exp) {
+    const filtered =
+        allExpenses.filter(function (exp) {
 
-        const d = new Date(exp.date);
+            const d =
+                new Date(exp.date);
 
-        return d.getMonth() == month;
-    });
+            return d.getMonth() == month;
+
+        });
 
     displayExpenses(filtered);
+
 }
+
 
 // ================= DELETE =================
 
@@ -95,45 +144,151 @@ async function deleteExpense(id) {
     const confirmDelete =
         confirm("Delete this expense?");
 
-    if (!confirmDelete) return;
+    if (!confirmDelete)
+        return;
 
-    await fetch("/api/expenses/" + id, {
-        method: "DELETE"
+
+    // Find Expense
+
+    const expense =
+        allExpenses.find(function (e) {
+
+            return e._id === id;
+
+        });
+
+
+    // Save into Recently Deleted
+
+    let deletedExpenses =
+        JSON.parse(
+            localStorage.getItem("deletedExpenses")
+        ) || [];
+
+
+    deletedExpenses.push({
+
+        name: expense.name,
+
+        amount: expense.amount,
+
+        date: expense.date,
+
+        deletedAt:
+            new Date()
+
     });
 
+
+    localStorage.setItem(
+
+        "deletedExpenses",
+
+        JSON.stringify(deletedExpenses)
+
+    );
+
+
+    // Delete from MongoDB
+
+    await fetch(
+
+        "/api/expenses/" + id,
+
+        {
+
+            method: "DELETE"
+
+        }
+
+    );
+
+
     showExpenses();
+
 }
+
 
 // ================= EDIT =================
 
 async function editExpense(id) {
 
     const expense =
-        allExpenses.find(e => e._id === id);
+        allExpenses.find(function (e) {
 
-    const newName =
-        prompt("Edit Name", expense.name);
+            return e._id === id;
 
-    const newAmount =
-        prompt("Edit Amount", expense.amount);
+        });
 
-    if (newName === null || newAmount === null)
+
+    let newName =
+        prompt(
+
+            "Edit Expense Name",
+
+            expense.name
+
+        );
+
+
+    if (newName === null)
         return;
 
-    await fetch("/api/expenses/" + id, {
 
-        method: "PUT",
+    let newAmount =
+        prompt(
 
-        headers: {
-            "Content-Type": "application/json"
-        },
+            "Edit Amount",
 
-        body: JSON.stringify({
-            name: newName,
-            amount: Number(newAmount)
-        })
+            expense.amount
 
-    });
+        );
 
-    showExpenses();
+
+    if (newAmount === null)
+        return;
+
+
+    try {
+
+        await fetch(
+
+            "/api/expenses/" + id,
+
+            {
+
+                method: "PUT",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json"
+
+                },
+
+                body: JSON.stringify({
+
+                    name: newName,
+
+                    amount:
+                        Number(newAmount)
+
+                })
+
+            }
+
+        );
+
+        showExpenses();
+
+    }
+
+    catch (err) {
+
+        console.log(err);
+
+        alert("Unable to update");
+
+    }
+
 }
